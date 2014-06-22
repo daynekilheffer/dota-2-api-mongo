@@ -1,0 +1,14 @@
+{
+  "name": "dota-2-api-mongo",
+  "version": "0.0.1",
+  "description": "artifact to import matches into mongo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD",
+  "dependencies": {
+    "mongoose": "~3.8.12"
+  }
+}
