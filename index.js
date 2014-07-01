@@ -1,10 +1,13 @@
+var async = require('async');
 var mongoose = require('mongoose');
 var dota = require('./lib/dota-2-api');
 var config = require('./config');
 
 var mongoUrl = 'mongodb://' + config.user + ':' + config.pass + '@' + config.host + '/' + config.dbname;
 
+console.log('connecting');
 mongoose.connect(mongoUrl);
+console.log('connected');
 
 var playerSchema = new mongoose.Schema({
 	account_id: Number,
@@ -30,14 +33,22 @@ var client = new dota.client({
     steam: steamClient
 });
 
-client.matchHistory().accountId(140802608).maximumMatches(1).then(function(error, body) {
-	console.log(arguments);
+client.matchHistory().accountId(140802608).then(function(error, body) {
     var result = JSON.parse(body).result;
-    var match = new Match(result.matches[0]);
-    console.log(match.match_id);
-    match.save(function() {
-    	console.log('saved');
-    	console.log(arguments);
-    	mongoose.disconnect();
-    });
+    async.each(
+        result.matches,
+        function(rawMatch, callback) {
+            var match = new Match(rawMatch);
+            console.log('saving: ' + match.match_id);
+            match.save(function() {
+                console.log('saved: ' + match.match_id);
+                callback();
+            });
+        },
+        function() {
+            console.log('done');
+            mongoose.disconnect();
+            console.log('disconnected');
+        }
+    );
 });
