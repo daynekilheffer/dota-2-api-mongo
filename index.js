@@ -1,6 +1,7 @@
 var async = require('async');
 var mongoose = require('mongoose');
 var dota = require('./lib/dota-2-api');
+var all = require('./lib/dota-2-api_all');
 var config = require('./config');
 
 var mongoUrl = 'mongodb://' + config.user + ':' + config.pass + '@' + config.host + '/' + config.dbname;
@@ -19,7 +20,7 @@ var matchSchema = new mongoose.Schema({
 	match_id: Number,
 	match_seq_num: Number,
 	start_time: Number,
-	lobby_time: Number,
+	lobby_type: Number,
 	players: [playerSchema]
 });
 
@@ -33,10 +34,9 @@ var client = new dota.client({
     steam: steamClient
 });
 
-client.matchHistory().accountId(140802608).then(function(error, body) {
-    var result = JSON.parse(body).result;
+all.matchHistory(client.matchHistory().accountId(140802608)).then(function(error, games) {
     async.each(
-        result.matches,
+        games,
         function(rawMatch, callback) {
             var match = new Match(rawMatch);
             console.log('saving: ' + match.match_id);

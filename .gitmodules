@@ -1,3 +1,6 @@
 [submodule "lib/dota-2-api"]
 	path = lib/dota-2-api
 	url = https://github.com/daynekilheffer/dota-2-api.git
+[submodule "lib/dota-2-api_all"]
+	path = lib/dota-2-api_all
+	url = https://github.com/daynekilheffer/dota-2-api_all
